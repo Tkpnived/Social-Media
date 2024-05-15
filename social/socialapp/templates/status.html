@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .status-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            color: white;
+        }
+
+        .status-page-content {
+            text-align: center;
+            overflow: hidden; /* Hide overflow to create a fade effect */
+        }
+
+        .status-item-container {
+            margin-right: 20px; /* Adjust the spacing between images */
+            position: relative;
+            display: inline-block;
+            opacity: 0; /* Initially hide all images */
+            transition: opacity 1s ease; /* Set the duration of the fade-in/out transition */
+            width: 500px; /* Set a fixed width for the container */
+            height: 650px; /* Set a fixed height for the container */
+        }
+
+        .status-item {
+            width: 100%;
+            height: 100%;
+        }
+
+        hr.fade-out {
+            opacity: 1;
+            width: 500px; /* Set the initial width to match the images */
+            margin-left: 0; /* Set margin to 0 initially */
+            transform-origin: left; /* Set the transform origin to the left side */
+            transform: translateX(0); /* Initial translateX value */
+            transition: transform 5s ease, opacity 5s ease; /* Set the duration of the fade-out transition */
+        }
+    </style>
+    <title>Status Page</title>
+</head>
+<body style="background:#D3D3D3;">
+
+    <div class="status-page" style="background:rgb(133, 176, 190);">
+        <div class="status-page-content" id="status-content" style="border: 1px solid black;border-radius: 10px;">
+            {% for i in sta %}
+                <div class="status-item-container">
+                    <p style="margin-bottom: 50px; font-size: 31px;color:black;">{{ i.user }}</p>
+                    <div class="status-item">
+                        <img src="{{ i.image.url }}" style="border-radius: 10px;" width="550px;" height="650px;" alt="Status Indicator">
+                    </div>
+                </div>
+            {% endfor %}
+            <hr class="fade-out" id="status-hr" color="black" style="margin-left:20px;">
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var containers = document.querySelectorAll('.status-item-container');
+        var hr = document.getElementById('status-hr');
+        var counter = 0;
+
+        // Set initial width to 500px and center it
+        hr.style.width = '750px';
+        hr.style.marginLeft = '-250px'; // Half of the width to center it
+
+        function showNextImage() {
+            // Hide all containers except the current one
+            containers.forEach(function (container, index) {
+                container.style.opacity = index === counter ? '1' : '0';
+            });
+
+            counter++;
+
+            // Automatically hide hr with left to right transition
+            setTimeout(function () {
+                hr.style.transition = 'width 8s, transform 8s, opacity 8s';
+                hr.style.width = '0';  // Set width to 0 for left-to-right effect
+                hr.style.transform = 'translateX(100%)';
+                hr.style.opacity = '0';
+            }, 0); // No initial delay
+
+            // Automatically remove hr and return to the index page after hr hide
+            setTimeout(function () {
+                hr.remove();
+                window.location.href = 'http://127.0.0.1:8000/web';
+            }, 5000); // 5000 milliseconds = 5 seconds (including image display time and hr hide)
+        }
+
+        // Start the loop to show one image
+        showNextImage();
+    });
+</script>
+
+
+
+
+</body>
+</html>
